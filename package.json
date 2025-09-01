@@ -1,6 +1,6 @@
 {
  "name": "better-rss-feed-discord-bot",
- "version": "0.0.1",
+ "version": "1.0.0",
  "description": "This bot monitors the RSS feed of the EDGAR site for any new update filings from specific companies",
  "main": "src/bot.ts",
  "scripts": {
