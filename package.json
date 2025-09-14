@@ -1,6 +1,6 @@
 {
  "name": "better-rss-feed-discord-bot",
- "version": "1.0.1",
+ "version": "1.0.2",
  "description": "This bot monitors the RSS feed of the EDGAR site for any new update filings from specific companies",
  "main": "src/bot.ts",
  "scripts": {
@@ -33,6 +33,6 @@
  "author": "CuratorOfBinaries",
  "license": "MIT",
  "engines": {
-    "node": ">=20.0.0 <22.0.0"
-  }
+  "node": ">=20.0.0 <22.0.0"
+ }
 }
