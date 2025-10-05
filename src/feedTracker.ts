@@ -3,8 +3,7 @@ import { ChannelInfo, CustomFeedItem, FeedItem } from './types';
 import { Client } from 'discord.js';
 import Parser from 'rss-parser';
 import config from './config';
-import { createHash } from 'crypto'
-import { feedNeedsUpdated, updateContentHash } from './db';
+import { feedNeedsUpdated, updateContentHash, getChannels, addChannel, removeChannel } from './db';
 
 class FeedTracker {
   private intervalId: NodeJS.Timeout | null = null;
@@ -16,7 +15,7 @@ class FeedTracker {
   constructor(client: Client, feedUrls: string[]) {
     this.client = client;
     this.feedUrls = feedUrls;
-    this.channels = [];
+    this.channels = getChannels() || [];
     this.parser = new Parser<CustomFeedItem>({
       customFields: {
         item: [
@@ -27,12 +26,22 @@ class FeedTracker {
     });
   }
 
+  public addChannel(channel: ChannelInfo) {
+    if(!this.channels.find(c => c.guildId === channel.guildId)) {
+      addChannel(channel.id, channel.guildId, channel.name);
+      this.channels.push(channel);
+    } else {
+      this.channels = this.channels.filter(c => c.guildId !== channel.guildId);
+      removeChannel(channel.guildId);
+      addChannel(channel.id, channel.guildId, channel.name);
+      this.channels.push(channel);
+    }
+  }
   public startTracking(interval: number) {
     if (this.intervalId) {
       return; // Already tracking
     }
 
-    this.getAvailableChannels();
     this.intervalId = setInterval(() => this.checkFeeds().catch(console.error), interval);
   }
 
@@ -44,9 +53,6 @@ class FeedTracker {
   }
 
   public async checkFeeds() {
-    if(!this.channels.length) {
-      this.getAvailableChannels();
-    }
     const tasks = this.feedUrls.map(async (url) => {
       try {
         console.debug('Checking feed:', url);
@@ -109,22 +115,6 @@ class FeedTracker {
     });
 
     await Promise.all(tasks);
-  }
-
-  private getAvailableChannels() {
-    this.client.guilds.cache.forEach(guild => {
-      guild.channels.cache.forEach(channel => {
-        if(channel.isTextBased() 
-          && channel.isSendable()
-        ) {
-          this.channels.push({
-            id: channel.id,
-            name: channel.name,
-            guildId: guild.id
-          })
-        }
-      });
-    })
   }
 }
 

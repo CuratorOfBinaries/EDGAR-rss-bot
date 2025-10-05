@@ -2,6 +2,16 @@
 
 This bot monitors the rss feeds of filings of companies on EDGAR
 
+# Installation
+
+### Discord
+
+In order to install the discord bot to the server, the user will need to click on a oauth2 link. This link will be shared when requested. Once they have click on the link, they will be prompted to allow the discord bot to added to the server along with required permissions.
+
+The configuration channel will be created and only will be accessible by the admins of the server.
+
+**SCREENSHOT**
+
 # How to Run
 
 Firstly, ensure that environment variables are configured:
